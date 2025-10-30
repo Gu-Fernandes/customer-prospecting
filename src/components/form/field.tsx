@@ -2,25 +2,19 @@
 "use client";
 
 import * as React from "react";
-import { Controller, useFormContext, type FieldValues } from "react-hook-form";
+import {
+  Controller,
+  useFormContext,
+  type FieldValues,
+  type Path,
+} from "react-hook-form";
 import { cn } from "@/libs/cn";
 import { icons } from "@/components/icons";
 
-type KnownNames =
-  | "email"
-  | "phone"
-  | "company"
-  | "cnpj"
-  | "responsible"
-  | "main_product"
-  | "sku"
-  | "supplier"
-  | "password";
-
 type FormatKind = "cnpj" | "phone" | "upper";
 
-type Props<TFieldValues extends FieldValues = Record<KnownNames, string>> = {
-  name: KnownNames;
+type FieldProps<TFieldValues extends FieldValues = FieldValues> = {
+  name: Path<TFieldValues>;
   label?: string;
   placeholder?: string;
   type?: React.InputHTMLAttributes<HTMLInputElement>["type"];
@@ -31,6 +25,7 @@ type Props<TFieldValues extends FieldValues = Record<KnownNames, string>> = {
 
 function formatValue(v: string, kind?: FormatKind): string {
   if (!kind) return v;
+
   if (kind === "upper") return v.toUpperCase();
 
   if (kind === "cnpj") {
@@ -60,9 +55,7 @@ function formatValue(v: string, kind?: FormatKind): string {
   return v;
 }
 
-export function Field<
-  TFieldValues extends FieldValues = Record<KnownNames, string>
->({
+export function Field<TFieldValues extends FieldValues = FieldValues>({
   name,
   label,
   placeholder,
@@ -70,13 +63,13 @@ export function Field<
   icon,
   format,
   className,
-}: Props<TFieldValues>) {
+}: FieldProps<TFieldValues>) {
   const { control } = useFormContext<TFieldValues>();
   const Icon = icon ? icons[icon] : null;
 
   return (
     <Controller
-      name={name as any} // o nome é restrito; RHF aceita string
+      name={name}
       control={control}
       render={({ field, fieldState }) => (
         <div className={cn("flex flex-col gap-1", className)}>
@@ -96,7 +89,7 @@ export function Field<
             <input
               {...field}
               type={type}
-              value={field.value ?? ""}
+              value={(field.value as string) ?? ""}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const raw = e.target.value;
                 const val = format ? formatValue(raw, format) : raw;

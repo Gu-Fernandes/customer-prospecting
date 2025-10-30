@@ -43,7 +43,7 @@ export function AuthGuard({
               Início
             </Button>
           </Link>
-          <Link href="/login">
+          <Link href="/">
             <Button variant="default">Ir para login</Button>
           </Link>
         </div>

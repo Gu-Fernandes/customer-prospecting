@@ -39,7 +39,7 @@ export function LoginCard({ onSuccess }: Props) {
   }
 
   return (
-    <div className="w-full max-w-md rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="w-full max-w-md rounded-xl mx-3 border border-zinc-200 p-5">
       <h1 className="mb-4 text-xl font-semibold">Entrar</h1>
 
       {error && (
@@ -64,7 +64,7 @@ export function LoginCard({ onSuccess }: Props) {
             name="password"
             label="Senha"
             type="password"
-            placeholder="sua senha"
+            placeholder="********"
             icon="lock"
           />
           <Button type="submit" disabled={isSubmitting}>

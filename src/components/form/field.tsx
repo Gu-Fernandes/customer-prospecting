@@ -1,141 +1,108 @@
+// src/components/form/field.tsx
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { useFormContext } from "react-hook-form";
-
-import type { CustomerFormValues } from "@/schemas/customer-form-schema";
-import { TextInput } from "@/components/input/input";
+import { useId } from "react";
+import { useFormContext, type FieldValues, type Path } from "react-hook-form";
 import { cn } from "@/libs/cn";
-import { icons, type IIcons } from "@/components/icons";
+import { icons } from "@/components/icons";
 
-type MaskKind = "cnpj" | "phone" | "upper";
+type Format = "cnpj" | "phone" | "upper";
 
-export interface FieldProps {
-  name: keyof CustomerFormValues;
-  label: string;
-  placeholder?: string;
+export type FieldProps<T extends FieldValues = FieldValues> = {
+  name: Path<T>; // agora é genérico
+  label?: string;
   type?: string;
-  format?: MaskKind; // "cnpj" | "phone" | "upper"
-  icon: IIcons; // "building", "phone", etc
+  placeholder?: string;
+  icon?: keyof typeof icons;
+  format?: Format;
   className?: string;
-}
+};
 
-/* --- Máscaras / transformações --- */
-
-// 12.345.678/0001-90
-function maskCNPJ(raw: string): string {
-  const digits = raw.replace(/\D/g, "").slice(0, 14);
-
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
-  if (digits.length <= 8)
-    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
-  if (digits.length <= 12)
-    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(
-      5,
-      8
-    )}/${digits.slice(8)}`;
-
-  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(
-    5,
-    8
-  )}/${digits.slice(8, 12)}-${digits.slice(12, 14)}`;
-}
-
-// (11) 91234-5678 / (11) 1234-5678
-function maskPhone(raw: string): string {
-  const digits = raw.replace(/\D/g, "").slice(0, 11);
-  if (!digits) return "";
-
-  const ddd = digits.slice(0, 2);
-  const rest = digits.slice(2);
-
-  if (digits.length <= 2) {
-    return `(${ddd}`;
-  }
-
-  if (digits.length <= 6) {
-    return `(${ddd}) ${rest}`;
-  }
-
-  if (digits.length <= 10) {
-    return `(${ddd}) ${rest.slice(0, 4)}-${rest.slice(4)}`;
-  }
-
-  return `(${ddd}) ${rest.slice(0, 5)}-${rest.slice(5)}`;
-}
-
-function toUpper(raw: string): string {
-  return raw.toUpperCase();
-}
-
-export function Field({
+export function Field<T extends FieldValues = FieldValues>({
   name,
   label,
-  placeholder,
   type = "text",
-  format,
+  placeholder,
   icon,
+  format,
   className,
-}: FieldProps) {
+}: FieldProps<T>) {
+  const id = useId();
   const {
     register,
-    setValue,
-    watch,
     formState: { errors },
-  } = useFormContext<CustomerFormValues>();
+  } = useFormContext<T>();
 
-  // valor atual reativo daquele campo
-  const value = watch(name) ?? "";
+  const Icon = icon ? icons[icon] : null;
+  const errMsg = (errors as any)?.[name]?.message as string | undefined;
 
-  // só queremos o ref e o onBlur do RHF
-  const { ref, onBlur } = register(name);
+  function handleInput(e: React.FormEvent<HTMLInputElement>) {
+    const el = e.currentTarget;
 
-  // decide qual função de máscara/transf usar com base em `format`
-  const applyMask = useMemo(() => {
-    if (format === "cnpj") return maskCNPJ;
-    if (format === "phone") return maskPhone;
-    if (format === "upper") return toUpper;
-    return null;
-  }, [format]);
+    if (format === "upper") el.value = el.value.toUpperCase();
 
-  // onChange controlado: aplica máscara / upper e joga no RHF
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const raw = e.target.value;
-      const nextValue = applyMask ? applyMask(raw) : raw;
+    if (format === "cnpj") {
+      const d = el.value.replace(/\D/g, "").slice(0, 14);
+      let out = d;
+      if (d.length > 2) out = `${d.slice(0, 2)}.${d.slice(2)}`;
+      if (d.length > 5) out = `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5)}`;
+      if (d.length > 8)
+        out = `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(
+          8
+        )}`;
+      if (d.length > 12)
+        out = `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(
+          8,
+          12
+        )}-${d.slice(12, 14)}`;
+      el.value = out;
+    }
 
-      setValue(name, nextValue, {
-        shouldDirty: true,
-        shouldTouch: true,
-        shouldValidate: false, // valida depois no submit
-      });
-    },
-    [applyMask, name, setValue]
-  );
-
-  const fieldError = errors[name]?.message as string | undefined;
-
-  // transforma a string `icon` em componente real
-  const IconComponent = icons[icon];
-  const iconNode = (
-    <IconComponent className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
-  );
+    if (format === "phone") {
+      const d = el.value.replace(/\D/g, "").slice(0, 11);
+      if (!d) return (el.value = "");
+      const dd = d.slice(0, 2);
+      const r = d.slice(2);
+      if (d.length <= 2) el.value = `(${dd}`;
+      else if (d.length <= 6) el.value = `(${dd}) ${r}`;
+      else if (d.length <= 10)
+        el.value = `(${dd}) ${r.slice(0, 4)}-${r.slice(4)}`;
+      else el.value = `(${dd}) ${r.slice(0, 5)}-${r.slice(5)}`;
+    }
+  }
 
   return (
-    <div className={cn("", className)}>
-      <TextInput
-        label={label}
-        id={name}
-        placeholder={placeholder}
-        type={type}
-        value={value}
-        onChange={handleChange}
-        onBlur={onBlur}
-        ref={ref}
-        error={fieldError}
-        icon={iconNode}
-      />
+    <div className={cn("flex flex-col gap-1", className)}>
+      {label && (
+        <label
+          htmlFor={id}
+          className="text-sm font-medium text-zinc-800 dark:text-zinc-100"
+        >
+          {label}
+        </label>
+      )}
+
+      <div className="relative">
+        {Icon && (
+          <Icon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+        )}
+        <input
+          id={id}
+          type={type}
+          placeholder={placeholder}
+          {...register(name as Path<T>)}
+          onInput={handleInput}
+          className={cn(
+            "w-full rounded-md border border-zinc-300 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900",
+            !Icon && "pl-3",
+            errMsg && "border-red-400 focus:border-red-500"
+          )}
+        />
+      </div>
+
+      {errMsg && (
+        <p className="text-xs text-red-600 dark:text-red-400">{errMsg}</p>
+      )}
     </div>
   );
 }

@@ -24,36 +24,35 @@ export function SuccessModal({
   return (
     <div
       className={cn(
-        // backdrop cobrindo a tela toda
         "fixed inset-0 z-50 flex items-center justify-center p-4",
         "bg-black/40 backdrop-blur-[2px]"
       )}
     >
-      {/* caixinha do modal */}
       <div
         className={cn(
           "relative w-full max-w-md rounded-xl border border-zinc-200 bg-white p-5 shadow-xl"
         )}
       >
-        {/* botão fechar no canto superior direito */}
+        {/* Fechar */}
         <button
           onClick={onClose}
           className={cn(
             "absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
           )}
+          title="Fechar"
         >
           <XIcon className="h-4 w-4" />
         </button>
 
-        {/* conteúdo principal */}
+        {/* Conteúdo */}
         <div className="flex flex-col gap-5">
           <div className="flex items-start gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/40">
-              <CheckIcon className="h-5 w-5 text-green-600 " />
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100">
+              <CheckIcon className="h-5 w-5 text-green-600" />
             </div>
 
-            <div className="text-sm leading-relaxed py-2">
-              <p className="text-zinc-600 ">
+            <div className="py-2 text-sm leading-relaxed">
+              <p className="text-zinc-600">
                 <span className="font-semibold text-zinc-800">
                   {companyName}
                 </span>{" "}
@@ -62,8 +61,7 @@ export function SuccessModal({
             </div>
           </div>
 
-          {/* ações */}
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+          <div className="flex gap-2 justify-end">
             <Link href="/prospecting">
               <Button variant="outline">Ver clientes</Button>
             </Link>

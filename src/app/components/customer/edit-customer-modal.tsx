@@ -101,13 +101,20 @@ export function EditCustomerModal({
 
   return (
     <>
+      {/* Backdrop + painel responsivo */}
       <div
         className={cn(
-          "fixed inset-0 z-50 flex items-center justify-center p-4",
+          "fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4",
           "bg-black/40 backdrop-blur-[2px]"
         )}
       >
-        <div className="relative w-full max-w-2xl rounded-xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+        <div
+          className={cn(
+            "relative w-full sm:max-w-2xl rounded-xl border border-zinc-200",
+            "bg-white p-4 sm:p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900",
+            "max-h-[90vh] overflow-y-auto"
+          )}
+        >
           <button
             onClick={onClose}
             className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
@@ -177,14 +184,16 @@ export function EditCustomerModal({
                 icon="container"
               />
 
-              <div className="md:col-span-2 mt-2 flex items-center justify-between gap-2">
+              <div className="md:col-span-2 mt-2 flex w-full items-center justify-between gap-2 flex-wrap">
                 <Button
                   type="button"
                   variant="destructive"
                   icon="trash"
+                  aria-label="Excluir cliente"
                   onClick={() => setConfirmOpen(true)}
+                  className="px-2 sm:px-4"
                 >
-                  Excluir cliente
+                  <span className="hidden sm:inline">Excluir cliente</span>
                 </Button>
 
                 <div className="flex items-center gap-2">

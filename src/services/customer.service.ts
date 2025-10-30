@@ -41,34 +41,46 @@ export type UpdateCustomerDto = Partial<Omit<Customer, "id" | "created_at">>;
 export async function createCustomer(
   payload: CustomerFormValues
 ): Promise<CreateCustomerResponse> {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+
   const res = await fetch(`${API_BASE_URL}/customers`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: JSON.stringify(payload),
-    cache: "no-store",
   });
 
   if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    throw new Error(`POST ${res.status} ${res.statusText} — ${txt}`);
+    const errorText = await res.text().catch(() => "Erro desconhecido");
+    throw new Error(`Erro ao cadastrar cliente [${res.status}]: ${errorText}`);
   }
+
   return res.json();
 }
 
 // GET /customers
 export async function getCustomers(): Promise<Customer[]> {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+
   const res = await fetch(`${API_BASE_URL}/customers`, {
     method: "GET",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     cache: "no-store",
   });
 
   if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    throw new Error(`GET ${res.status} ${res.statusText} — ${txt}`);
+    const errorText = await res.text().catch(() => "Erro desconhecido");
+    throw new Error(`Erro ao buscar clientes [${res.status}]: ${errorText}`);
   }
+
   return res.json();
 }
-
 // GET /customers/:id
 export async function getCustomerById(id: string): Promise<Customer> {
   const res = await fetch(`${API_BASE_URL}/customers/${id}`, {

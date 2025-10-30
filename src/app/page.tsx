@@ -1,44 +1,33 @@
-// src/app/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { isAuthenticated } from "@/services/auth.service";
-import { HomeCards } from "./components/home-cards";
 import { LoginCard } from "./components/login-card";
+import { HomeCards } from "./components/home-cards";
 
-export default function Home() {
-  const [auth, setAuth] = useState<null | boolean>(null);
+export default function Page() {
+  const [auth, setAuth] = useState<boolean>(() => isAuthenticated());
 
   useEffect(() => {
-    setAuth(isAuthenticated());
-    // atualizar quando o login acontecer em outra aba/janela
+    // atualiza se o token mudar em outra aba
     const onStorage = (e: StorageEvent) => {
       if (e.key === "access_token") setAuth(!!e.newValue);
     };
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+
+    // opcional: revalida quando a aba volta a ficar visível
+    const onVis = () => setAuth(isAuthenticated());
+    document.addEventListener("visibilitychange", onVis);
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      document.removeEventListener("visibilitychange", onVis);
+    };
   }, []);
 
-  if (auth === null) {
-    return (
-      <main className="flex min-h-screen items-center justify-center">
-        <div className="text-sm text-zinc-500">Carregando…</div>
-      </main>
-    );
-  }
-
-  if (!auth) {
-    return (
-      <main className="flex min-h-screen items-center justify-center">
-        <LoginCard onSuccess={() => setAuth(true)} />
-      </main>
-    );
-  }
-
-  // já autenticado → render padrão
   return (
     <main className="flex min-h-screen items-center justify-center">
-      <HomeCards />
+      {auth ? <HomeCards /> : <LoginCard onSuccess={() => setAuth(true)} />}
     </main>
   );
 }

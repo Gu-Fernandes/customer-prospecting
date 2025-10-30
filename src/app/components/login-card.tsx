@@ -33,7 +33,7 @@ export function LoginCard({ onSuccess }: Props) {
     try {
       await login(values);
       onSuccess?.();
-    } catch (err) {
+    } catch {
       setError("E-mail ou senha inválidos.");
     }
   }

@@ -1,14 +1,16 @@
-import { CustomerFormValues } from "@/schemas/customer-form-schema";
+import { type CustomerFormValues } from "@/schemas/customer-form-schema";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(
+  /\/+$/,
+  ""
+);
 if (!API_BASE_URL) {
   throw new Error(
     "NEXT_PUBLIC_API_URL não foi definido. Crie .env.local com NEXT_PUBLIC_API_URL=http://127.0.0.1:8000"
   );
 }
 
-// Esse tipo representa exatamente o que o backend retorna em GET /customers
+/** Modelo retornado pelo backend */
 export type Customer = {
   id: string;
   company: string;
@@ -19,45 +21,99 @@ export type Customer = {
   main_product: string;
   sku: string;
   supplier: string;
-  created_at: string; // ISO string
+  created_at: string; // ISO
 };
 
-// Resposta do POST /customers
+/** Respostas típicas */
 export type CreateCustomerResponse = {
   message: string;
   data: Customer;
 };
 
-// POST - usado no cadastro
+export type DeleteCustomerResponse = {
+  message: string;
+  deleted?: Partial<Customer>;
+};
+
+export type UpdateCustomerDto = Partial<Omit<Customer, "id" | "created_at">>;
+
+// POST /customers
 export async function createCustomer(
   payload: CustomerFormValues
 ): Promise<CreateCustomerResponse> {
   const res = await fetch(`${API_BASE_URL}/customers`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+    cache: "no-store",
   });
 
   if (!res.ok) {
-    const errorText = await res.text().catch(() => "Erro desconhecido");
-    throw new Error(`Erro ao cadastrar cliente [${res.status}]: ${errorText}`);
+    const txt = await res.text().catch(() => "");
+    throw new Error(`POST ${res.status} ${res.statusText} — ${txt}`);
   }
-
   return res.json();
 }
 
-// GET - lista todos os clientes (para prospection)
+// GET /customers
 export async function getCustomers(): Promise<Customer[]> {
   const res = await fetch(`${API_BASE_URL}/customers`, {
     method: "GET",
+    cache: "no-store",
   });
 
   if (!res.ok) {
-    const errorText = await res.text().catch(() => "Erro desconhecido");
-    throw new Error(`Erro ao buscar clientes [${res.status}]: ${errorText}`);
+    const txt = await res.text().catch(() => "");
+    throw new Error(`GET ${res.status} ${res.statusText} — ${txt}`);
   }
+  return res.json();
+}
 
+// GET /customers/:id
+export async function getCustomerById(id: string): Promise<Customer> {
+  const res = await fetch(`${API_BASE_URL}/customers/${id}`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const txt = await res.text().catch(() => "");
+    throw new Error(`GET ${res.status} ${res.statusText} — ${txt}`);
+  }
+  return res.json();
+}
+
+// PATCH /customers/:id
+export async function updateCustomer(
+  id: string,
+  data: UpdateCustomerDto
+): Promise<Customer> {
+  const res = await fetch(`${API_BASE_URL}/customers/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const txt = await res.text().catch(() => "");
+    throw new Error(`PATCH ${res.status} ${res.statusText} — ${txt}`);
+  }
+  return res.json();
+}
+
+// DELETE /customers/:id
+export async function deleteCustomer(
+  id: string
+): Promise<DeleteCustomerResponse> {
+  const res = await fetch(`${API_BASE_URL}/customers/${id}`, {
+    method: "DELETE",
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    const txt = await res.text().catch(() => "");
+    throw new Error(`DELETE ${res.status} ${res.statusText} — ${txt}`);
+  }
   return res.json();
 }

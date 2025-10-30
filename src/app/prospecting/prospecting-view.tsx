@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getCustomers, type Customer } from "@/services/customer.service";
 import { CustomersTable } from "../components/customer/customers-table";
 
@@ -10,7 +10,7 @@ export function ProspectingView() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function load() {
+    (async () => {
       try {
         const result = await getCustomers();
         setData(result);
@@ -20,13 +20,37 @@ export function ProspectingView() {
       } finally {
         setLoading(false);
       }
-    }
-
-    load();
+    })();
   }, []);
 
+  const handleRowUpdated = useCallback((updated: Customer) => {
+    setData((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+  }, []);
+
+  const handleRowDeleted = useCallback((id: string) => {
+    setData((prev) => prev.filter((c) => c.id !== id));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="text-sm text-zinc-500 dark:text-zinc-400">
+          Carregando...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="text-sm text-red-500 dark:text-red-400">{error}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full max-w-6xl rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="w-full max-w-full rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
       <header className="mb-4">
         <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
           Prospecção
@@ -36,15 +60,11 @@ export function ProspectingView() {
         </p>
       </header>
 
-      {loading ? (
-        <div className="text-sm text-zinc-500 dark:text-zinc-400">
-          Carregando...
-        </div>
-      ) : error ? (
-        <div className="text-sm text-red-500 dark:text-red-400">{error}</div>
-      ) : (
-        <CustomersTable customers={data} />
-      )}
+      <CustomersTable
+        customers={data}
+        onRowUpdated={handleRowUpdated}
+        onRowDeleted={handleRowDeleted}
+      />
     </div>
   );
 }

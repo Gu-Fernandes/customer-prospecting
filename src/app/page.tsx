@@ -33,7 +33,7 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
+    <main className="flex min-h-screen items-center mx-3 justify-center">
       {auth ? <HomeCards /> : <LoginCard onSuccess={() => setAuth(true)} />}
     </main>
   );

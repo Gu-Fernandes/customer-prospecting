@@ -1,4 +1,4 @@
-// src/app/customers/customer-form-card.tsx
+// src/app/components/customer/customer-form-card.tsx
 "use client";
 
 import { useState } from "react";
@@ -17,6 +17,7 @@ import { Form } from "@/components/form/form";
 import { SuccessModal } from "@/components/feedback/success-modal";
 import { icons } from "@/components/icons";
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { Loading } from "@/components/loading/loading";
 
 export function CustomerFormCard() {
   const [successCompany, setSuccessCompany] = useState<string | null>(null);
@@ -63,13 +64,14 @@ export function CustomerFormCard() {
 
   return (
     <AuthGuard fallbackMessage="Faça login para cadastrar um novo cliente.">
-      <SuccessModal
-        isOpen={isSuccessOpen}
-        companyName={successCompany}
-        onClose={handleCloseModal}
-      />
+      <div className="relative w-full max-w-4xl rounded-xl p-6 shadow-lg bg-white">
+        {/* modal de sucesso */}
+        <SuccessModal
+          isOpen={isSuccessOpen}
+          companyName={successCompany}
+          onClose={handleCloseModal}
+        />
 
-      <div className="w-full max-w-4xl rounded-xl p-6 shadow-lg">
         <div className="mb-6">
           <h1 className="text-xl font-semibold">Dados do Cliente</h1>
         </div>
@@ -151,6 +153,12 @@ export function CustomerFormCard() {
             </div>
           </Form>
         </FormProvider>
+
+        {isSubmitting && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/70">
+            <Loading label="Enviando..." />
+          </div>
+        )}
       </div>
     </AuthGuard>
   );

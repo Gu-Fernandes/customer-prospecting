@@ -64,7 +64,7 @@ export function LoginCard({ onSuccess }: Props) {
             name="password"
             label="Senha"
             type="password"
-            placeholder="********"
+            placeholder="*******"
             icon="lock"
           />
           <Button type="submit" disabled={isSubmitting}>

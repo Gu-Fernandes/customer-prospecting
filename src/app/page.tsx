@@ -4,18 +4,23 @@ import { useEffect, useState } from "react";
 import { isAuthenticated } from "@/services/auth.service";
 import { LoginCard } from "./components/login-card";
 import { HomeCards } from "./components/home-cards";
+import { Loading } from "@/components/loading/loading";
 
 export default function Page() {
-  const [auth, setAuth] = useState<boolean>(() => isAuthenticated());
+  // começa "indefinido" pra server e client baterem
+  const [auth, setAuth] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // atualiza se o token mudar em outra aba
+    // decide de fato no client
+    setAuth(isAuthenticated());
+
     const onStorage = (e: StorageEvent) => {
-      if (e.key === "access_token") setAuth(!!e.newValue);
+      if (e.key === "access_token") {
+        setAuth(!!e.newValue);
+      }
     };
     window.addEventListener("storage", onStorage);
 
-    // opcional: revalida quando a aba volta a ficar visível
     const onVis = () => setAuth(isAuthenticated());
     document.addEventListener("visibilitychange", onVis);
 
@@ -26,8 +31,15 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      {auth ? <HomeCards /> : <LoginCard onSuccess={() => setAuth(true)} />}
+    <main className="flex min-h-screen items-center mx-4 justify-center">
+      {auth === null ? (
+        // enquanto "pensa", mostra o spinner
+        <Loading fullScreen={false} label="Carregando..." />
+      ) : auth ? (
+        <HomeCards />
+      ) : (
+        <LoginCard onSuccess={() => setAuth(true)} />
+      )}
     </main>
   );
 }

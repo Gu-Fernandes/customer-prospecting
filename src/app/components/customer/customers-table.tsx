@@ -39,12 +39,18 @@ export function CustomersTable({
     return (
       <div className="text-sm text-zinc-500">
         Nenhum cliente cadastrado ainda.
-        <div className="mt-4 flex w-full items-center justify-between">
+        <div className="mt-4 flex w-full items-center justify-between gap-3">
           <Link href="/customers/new">
-            <Button variant="outline">+ Novo Cliente</Button>
+            <Button variant="outline" className="w-full sm:w-auto">
+              + Novo Cliente
+            </Button>
           </Link>
           <Link href="/">
-            <Button variant="default" icon="home" />
+            <Button
+              variant="default"
+              icon="home"
+              className="w-full sm:w-auto"
+            />
           </Link>
         </div>
       </div>
@@ -67,11 +73,70 @@ export function CustomersTable({
         }}
       />
 
-      <div className="overflow-x-auto">
+      {/* MOBILE: cards */}
+      <div className="space-y-3 md:hidden">
+        {customers.map((c) => (
+          <div
+            key={c.id}
+            className="rounded-lg border border-zinc-200 bg-white p-3 shadow-md"
+          >
+            <div className="mb-2 flex items-start justify-between">
+              <div>
+                <p className="text-sm font-semibold text-zinc-900">
+                  {c.company}
+                </p>
+                <p className="text-xs text-zinc-500">
+                  {formatCNPJDisplay(c.cnpj)}
+                </p>
+              </div>
+              <Button
+                variant="icon"
+                size="sm"
+                icon="pencil"
+                iconPosition="only"
+                aria-label={`Editar ${c.company}`}
+                onClick={() => handleOpenEdit(c)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <p className="text-zinc-400">Responsável</p>
+                <p className="text-zinc-700">{c.responsible}</p>
+              </div>
+              <div>
+                <p className="text-zinc-400">Telefone</p>
+                <p className="text-zinc-700">{formatPhoneDisplay(c.phone)}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-zinc-400">E-mail</p>
+                <p className="text-zinc-700 break-all">{c.email}</p>
+              </div>
+              <div>
+                <p className="text-zinc-400">Produto</p>
+                <p className="text-zinc-700">
+                  {c.main_product ? upper(c.main_product) : "—"}
+                </p>
+              </div>
+              <div>
+                <p className="text-zinc-400">SKU</p>
+                <p className="text-zinc-700">{c.sku ? upper(c.sku) : "—"}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-zinc-400">Fornecedor</p>
+                <p className="text-zinc-700">{c.supplier || "—"}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP: tabela */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-[900px] w-full border-collapse">
           <thead>
             <tr className="border-b border-zinc-200 text-left text-[11px] font-medium uppercase text-zinc-500">
-              <th className="w-10 py-1 pr-1"></th>
+              <th className="w-10 py-1 pr-1" />
               <th className="py-2 pr-4">Empresa</th>
               <th className="py-2 pr-4">CNPJ</th>
               <th className="py-2 pr-4">Responsável</th>
@@ -109,24 +174,26 @@ export function CustomersTable({
                 <td className="py-2 pr-4">{formatPhoneDisplay(c.phone)}</td>
                 <td className="py-2 pr-4">{c.email}</td>
                 <td className="py-2 pr-4 font-medium">
-                  {upper(c.main_product)}
+                  {c.main_product ? upper(c.main_product) : "—"}
                 </td>
                 <td className="py-2 pr-4 font-mono tracking-wide">
-                  {upper(c.sku)}
+                  {c.sku ? upper(c.sku) : "—"}
                 </td>
-                <td className="py-2 pr-4">{c.supplier}</td>
+                <td className="py-2 pr-4">{c.supplier || "—"}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="mt-4 flex w-full items-center justify-between">
+      <div className="mt-4 flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <Link href="/customers/new">
-          <Button variant="outline">+ Novo Cliente</Button>
+          <Button variant="outline" className="w-full sm:w-auto">
+            + Novo Cliente
+          </Button>
         </Link>
         <Link href="/">
-          <Button variant="default" icon="home" />
+          <Button variant="default" icon="home" className="w-full sm:w-auto" />
         </Link>
       </div>
     </div>

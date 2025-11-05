@@ -7,6 +7,8 @@ import { getCustomers, type Customer } from "@/services/customer.service";
 import { CustomersTable } from "../components/customer/customers-table";
 import { isAuthenticated } from "@/services/auth.service";
 
+const POLL_INTERVAL = 60_000;
+
 export function ProspectingView() {
   const isBrowser = typeof window !== "undefined";
 
@@ -14,38 +16,48 @@ export function ProspectingView() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  async function fetchCustomers() {
+    try {
+      const result = await getCustomers();
+      setCustomers(result);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError("Falha ao carregar clientes.");
+    }
+  }
+
   useEffect(() => {
     if (!isBrowser) return;
 
     const hasToken = isAuthenticated();
-
     if (!hasToken) {
       setLoading(false);
       return;
     }
 
-    let alive = true;
-
+    // primeira carga
     (async () => {
-      try {
-        const result = await getCustomers();
-        if (alive) {
-          setCustomers(result);
-        }
-      } catch (err) {
-        console.error(err);
-        if (alive) {
-          setError("Falha ao carregar clientes.");
-        }
-      } finally {
-        if (alive) {
-          setLoading(false);
-        }
-      }
+      await fetchCustomers();
+      setLoading(false);
     })();
 
+    // polling
+    const interval = setInterval(() => {
+      fetchCustomers();
+    }, POLL_INTERVAL);
+
+    // revalida quando volta pra aba
+    const onVis = () => {
+      if (document.visibilityState === "visible") {
+        fetchCustomers();
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+
     return () => {
-      alive = false;
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVis);
     };
   }, [isBrowser]);
 

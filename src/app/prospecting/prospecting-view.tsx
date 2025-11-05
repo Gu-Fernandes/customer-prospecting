@@ -12,7 +12,11 @@ const POLL_INTERVAL = 60_000;
 export function ProspectingView() {
   const isBrowser = typeof window !== "undefined";
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+
+    return isAuthenticated();
+  });
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,14 +36,17 @@ export function ProspectingView() {
 
     const hasToken = isAuthenticated();
     if (!hasToken) {
-      setLoading(false);
       return;
     }
+
+    let alive = true;
 
     // primeira carga
     (async () => {
       await fetchCustomers();
-      setLoading(false);
+      if (alive) {
+        setLoading(false);
+      }
     })();
 
     // polling
@@ -47,7 +54,6 @@ export function ProspectingView() {
       fetchCustomers();
     }, POLL_INTERVAL);
 
-    // revalida quando volta pra aba
     const onVis = () => {
       if (document.visibilityState === "visible") {
         fetchCustomers();
@@ -56,6 +62,7 @@ export function ProspectingView() {
     document.addEventListener("visibilitychange", onVis);
 
     return () => {
+      alive = false;
       clearInterval(interval);
       document.removeEventListener("visibilitychange", onVis);
     };

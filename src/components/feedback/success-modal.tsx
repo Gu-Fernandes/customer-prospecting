@@ -30,7 +30,7 @@ export function SuccessModal({
     >
       <div
         className={cn(
-          "relative w-full max-w-md rounded-xl border border-zinc-200 bg-white p-5 shadow-xl"
+          "relative w-full max-w-md rounded-xl border border-zinc-200 dark:border-border bg-white dark:bg-background p-5 shadow-xl"
         )}
       >
         {/* Fechar */}
@@ -45,15 +45,15 @@ export function SuccessModal({
         </button>
 
         {/* Conteúdo */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 pt-6">
           <div className="flex items-start gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100">
               <CheckIcon className="h-5 w-5 text-green-600" />
             </div>
 
             <div className="py-2 text-sm leading-relaxed">
-              <p className="text-zinc-600">
-                <span className="font-semibold text-zinc-800">
+              <p className="text-foreground/80">
+                <span className="font-semibold text-zinc-800 dark:text-foreground">
                   {companyName}
                 </span>{" "}
                 cadastrado com sucesso!

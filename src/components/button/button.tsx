@@ -35,14 +35,33 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       inline-flex items-center justify-center gap-2
       rounded-lg text-sm font-medium shadow-sm outline-none
       transition-colors disabled:cursor-not-allowed disabled:opacity-50
+      focus-visible:ring-2 focus-visible:ring-primary/40
     `;
 
     const variants: Record<ButtonVariant, string> = {
-      default: `bg-primary text-white hover:bg-primary/80 border border-primary`,
-      destructive: `bg-red-600 text-white hover:bg-red-500 focus:ring-red-500`,
-      outline: `bg-transparent text-foreground border border-primary hover:bg-primary hover:text-white`,
-      ghost: `bg-transparent text-foreground border-transparent`,
-      icon: `bg-transparent text-foreground`,
+      default: `
+        bg-primary text-white border border-primary
+        hover:bg-primary/80
+      `,
+      destructive: `
+        bg-red-600 text-white hover:bg-red-500
+        dark:bg-red-500 dark:hover:bg-red-400
+      `,
+      outline: `
+        bg-transparent text-foreground border border-primary
+        hover:bg-primary hover:text-white
+        dark:text-foreground dark:border-primary
+        dark:hover:bg-primary dark:hover:text-white
+      `,
+      ghost: `
+        bg-transparent text-foreground border-transparent
+        hover:bg-black/5
+        dark:text-foreground dark:hover:bg-white/5
+      `,
+      icon: `
+        bg-transparent text-foreground
+        dark:text-foreground
+      `,
     };
 
     const sizeMap = {

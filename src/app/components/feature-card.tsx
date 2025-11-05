@@ -27,20 +27,18 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-zinc-200 bg-white p-6 shadow-lg flex flex-col justify-between",
+        "rounded-xl border border-border p-6 shadow-lg flex flex-col justify-between",
         className
       )}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 text-zinc-900">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20">
           <Icon className="h-5 w-5" />
         </div>
 
         <div className="flex flex-col">
-          <h2 className="text-lg font-semibold leading-tight text-zinc-900">
-            {title}
-          </h2>
-          <p className="text-sm text-zinc-600">{description}</p>
+          <h2 className="text-lg font-semibold leading-tight">{title}</h2>
+          <p className="text-sm dark:text-zinc-400">{description}</p>
         </div>
       </div>
 

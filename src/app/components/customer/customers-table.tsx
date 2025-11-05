@@ -37,7 +37,7 @@ export function CustomersTable({
 
   if (customers.length === 0) {
     return (
-      <div className="text-sm text-zinc-500">
+      <div className="text-sm text-zinc-500 dark:text-foreground/70">
         Nenhum cliente cadastrado ainda.
         <div className="mt-4 flex w-full items-center justify-between gap-3">
           <Link href="/customers/new">
@@ -78,14 +78,14 @@ export function CustomersTable({
         {customers.map((c) => (
           <div
             key={c.id}
-            className="rounded-lg border border-zinc-200 bg-white p-3 shadow-md"
+            className="rounded-lg border border-border bg-background p-3 shadow-md"
           >
             <div className="mb-2 flex items-start justify-between">
               <div>
-                <p className="text-sm font-semibold text-zinc-900">
+                <p className="text-sm font-semibold text-foreground">
                   {c.company}
                 </p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-zinc-500 dark:text-foreground/60">
                   {formatCNPJDisplay(c.cnpj)}
                 </p>
               </div>
@@ -101,30 +101,46 @@ export function CustomersTable({
 
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <p className="text-zinc-400">Responsável</p>
-                <p className="text-zinc-700">{c.responsible}</p>
+                <p className="text-zinc-400 dark:text-foreground/50">
+                  Responsável
+                </p>
+                <p className="text-zinc-700 dark:text-foreground/90">
+                  {c.responsible}
+                </p>
               </div>
               <div>
-                <p className="text-zinc-400">Telefone</p>
-                <p className="text-zinc-700">{formatPhoneDisplay(c.phone)}</p>
+                <p className="text-zinc-400 dark:text-foreground/50">
+                  Telefone
+                </p>
+                <p className="text-zinc-700 dark:text-foreground/90">
+                  {formatPhoneDisplay(c.phone)}
+                </p>
               </div>
               <div className="col-span-2">
-                <p className="text-zinc-400">E-mail</p>
-                <p className="text-zinc-700 break-all">{c.email}</p>
+                <p className="text-zinc-400 dark:text-foreground/50">E-mail</p>
+                <p className="break-all text-zinc-700 dark:text-foreground/90">
+                  {c.email}
+                </p>
               </div>
               <div>
-                <p className="text-zinc-400">Produto</p>
-                <p className="text-zinc-700">
+                <p className="text-zinc-400 dark:text-foreground/50">Produto</p>
+                <p className="text-zinc-700 dark:text-foreground/90">
                   {c.main_product ? upper(c.main_product) : "—"}
                 </p>
               </div>
               <div>
-                <p className="text-zinc-400">SKU</p>
-                <p className="text-zinc-700">{c.sku ? upper(c.sku) : "—"}</p>
+                <p className="text-zinc-400 dark:text-foreground/50">SKU</p>
+                <p className="text-zinc-700 dark:text-foreground/90">
+                  {c.sku ? upper(c.sku) : "—"}
+                </p>
               </div>
               <div className="col-span-2">
-                <p className="text-zinc-400">Fornecedor</p>
-                <p className="text-zinc-700">{c.supplier || "—"}</p>
+                <p className="text-zinc-400 dark:text-foreground/50">
+                  Fornecedor
+                </p>
+                <p className="text-zinc-700 dark:text-foreground/90">
+                  {c.supplier || "—"}
+                </p>
               </div>
             </div>
           </div>
@@ -135,7 +151,7 @@ export function CustomersTable({
       <div className="hidden md:block overflow-x-auto">
         <table className="min-w-[900px] w-full border-collapse">
           <thead>
-            <tr className="border-b border-zinc-200 text-left text-[11px] font-medium uppercase text-zinc-500">
+            <tr className="border-b border-border text-left text-[11px] font-medium uppercase text-zinc-500 dark:text-foreground/50">
               <th className="w-10 py-1 pr-1" />
               <th className="py-2 pr-4">Empresa</th>
               <th className="py-2 pr-4">CNPJ</th>
@@ -148,11 +164,11 @@ export function CustomersTable({
             </tr>
           </thead>
 
-          <tbody className="text-sm text-zinc-800">
+          <tbody className="text-sm text-zinc-800 dark:text-foreground">
             {customers.map((c) => (
               <tr
                 key={c.id}
-                className="border-b border-zinc-100 hover:bg-zinc-50"
+                className="border-b border-zinc-100 dark:border-border/40 hover:bg-zinc-50 dark:hover:bg-background/40"
               >
                 <td className="py-2 pr-2">
                   <Button
@@ -166,7 +182,7 @@ export function CustomersTable({
                   />
                 </td>
 
-                <td className="py-2 pr-4 font-medium text-zinc-900">
+                <td className="py-2 pr-4 font-medium text-zinc-900 dark:text-foreground">
                   {c.company}
                 </td>
                 <td className="py-2 pr-4">{formatCNPJDisplay(c.cnpj)}</td>

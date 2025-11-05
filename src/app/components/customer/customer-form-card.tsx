@@ -64,7 +64,7 @@ export function CustomerFormCard() {
 
   return (
     <AuthGuard fallbackMessage="Faça login para cadastrar um novo cliente.">
-      <div className="relative w-full max-w-4xl rounded-xl p-6 shadow-lg bg-white">
+      <div className="relative w-full max-w-4xl rounded-xl p-6 shadow-lg">
         {/* modal de sucesso */}
         <SuccessModal
           isOpen={isSuccessOpen}
@@ -155,7 +155,7 @@ export function CustomerFormCard() {
         </FormProvider>
 
         {isSubmitting && (
-          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/70">
+          <div className="absolute inset-0 flex items-center justify-center rounded-xl">
             <Loading label="Enviando..." />
           </div>
         )}

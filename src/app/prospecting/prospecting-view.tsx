@@ -14,7 +14,6 @@ export function ProspectingView() {
 
   const [loading, setLoading] = useState<boolean>(() => {
     if (typeof window === "undefined") return true;
-
     return isAuthenticated();
   });
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -36,12 +35,12 @@ export function ProspectingView() {
 
     const hasToken = isAuthenticated();
     if (!hasToken) {
+      // loading já foi definido no estado inicial
       return;
     }
 
     let alive = true;
 
-    // primeira carga
     (async () => {
       await fetchCustomers();
       if (alive) {
@@ -49,7 +48,6 @@ export function ProspectingView() {
       }
     })();
 
-    // polling
     const interval = setInterval(() => {
       fetchCustomers();
     }, POLL_INTERVAL);
@@ -70,7 +68,7 @@ export function ProspectingView() {
 
   if (!isBrowser || loading) {
     return (
-      <div className="flex min-h-[200px] w-full items-center justify-center">
+      <div className="flex min-h-[200px] w-full items-center justify-center bg-background text-foreground">
         <Loading label="Carregando..." />
       </div>
     );
@@ -79,16 +77,14 @@ export function ProspectingView() {
   return (
     <AuthGuard fallbackMessage="Faça login para visualizar a lista de clientes.">
       {error ? (
-        <div className="w-full rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="text-sm text-red-500 dark:text-red-400">{error}</div>
+        <div className="w-full rounded-xl border border-border bg-background p-6 shadow-lg">
+          <div className="text-sm text-red-500 dark:text-red-300">{error}</div>
         </div>
       ) : (
-        <div className="w-full max-w-full rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="w-full max-w-full rounded-xl border border-border bg-background p-6 shadow-lg text-foreground">
           <header className="mb-4">
-            <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-              Prospecção
-            </h1>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            <h1 className="text-xl font-semibold">Prospecção</h1>
+            <p className="text-sm text-zinc-600 dark:text-foreground/70">
               Lista de clientes cadastrados e oportunidades.
             </p>
           </header>

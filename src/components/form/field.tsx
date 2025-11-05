@@ -74,7 +74,7 @@ export function Field<TFieldValues extends FieldValues = FieldValues>({
       render={({ field, fieldState }) => (
         <div className={cn("flex flex-col gap-1", className)}>
           {label && (
-            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-400">
               {label}
             </label>
           )}
@@ -97,12 +97,10 @@ export function Field<TFieldValues extends FieldValues = FieldValues>({
               }}
               placeholder={placeholder}
               className={cn(
-                "w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm outline-none",
-                "focus:border-zinc-400 focus:ring-1 focus:ring-zinc-300",
+                "w-full rounded-md border border-border px-3 py-2 text-sm outline-none",
+                " focus:ring-1",
                 Icon ? "pl-9" : "",
-                fieldState.error
-                  ? "border-red-400 focus:border-red-500 focus:ring-red-200"
-                  : ""
+                fieldState.error ? "" : ""
               )}
             />
           </div>

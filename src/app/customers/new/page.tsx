@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { CustomerFormCard } from "@/app/components/customer/customer-form-card";
 import { Loading } from "@/components/loading/loading";
 
 export default function RegistrationPage() {
-  const [mounted, setMounted] = useState(false);
+  const isBrowser = typeof window !== "undefined";
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  if (!isBrowser) {
+    return (
+      <main className="flex min-h-screen items-center justify-center p-6">
+        <Loading label="Carregando..." />
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center p-6">
-      {!mounted ? <Loading fullScreen={false} /> : <CustomerFormCard />}
+      <CustomerFormCard />
     </main>
   );
 }

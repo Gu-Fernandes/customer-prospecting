@@ -36,19 +36,11 @@ export const customerFormSchema = z.object({
       message: "Telefone inválido",
     }),
 
-  main_product: z
-    .string()
-    .min(1, "Produto principal é obrigatório")
-    .max(120, "Máximo de 120 caracteres"),
+  main_product: z.string().optional(),
 
-  sku: z
-    .string()
-    .min(1, "SKU é obrigatório")
-    .max(60, "Máximo de 60 caracteres"),
-  supplier: z
-    .string()
-    .min(2, "Informe o fornecedor")
-    .max(60, "Máximo de 60 caracteres"),
+  sku: z.string().optional(),
+
+  supplier: z.string().optional(),
 });
 
 export type CustomerFormValues = z.infer<typeof customerFormSchema>;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AppShell } from "@/components/app-shell/app-shell";
 
 export const metadata: Metadata = {
   title: "Prospecção clientes",
@@ -8,12 +9,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-br">
-      <body>{children}</body>
+      <body className="antialiased">
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }

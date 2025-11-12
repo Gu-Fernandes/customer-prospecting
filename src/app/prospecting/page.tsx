@@ -2,8 +2,8 @@ import { ProspectingView } from "./prospecting-view";
 
 export default function ProspectingPage() {
   return (
-    <main className="flex min-h-screen items-start justify-center bg-zinc-50 p-6 dark:bg-background">
+    <div className="flex h-full w-full justify-center bg-zinc-50 dark:bg-background">
       <ProspectingView />
-    </main>
+    </div>
   );
 }

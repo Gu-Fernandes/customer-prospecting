@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { Loading } from "@/components/loading/loading";
+import { Button } from "@/components/button/button";
 import { getCustomers, type Customer } from "@/services/customer.service";
 import { CustomersTable } from "../components/customer/customers-table";
 import { isAuthenticated } from "@/services/auth.service";
@@ -34,28 +36,19 @@ export function ProspectingView() {
     if (!isBrowser) return;
 
     const hasToken = isAuthenticated();
-    if (!hasToken) {
-      // loading já foi definido no estado inicial
-      return;
-    }
+    if (!hasToken) return;
 
     let alive = true;
 
     (async () => {
       await fetchCustomers();
-      if (alive) {
-        setLoading(false);
-      }
+      if (alive) setLoading(false);
     })();
 
-    const interval = setInterval(() => {
-      fetchCustomers();
-    }, POLL_INTERVAL);
+    const interval = setInterval(fetchCustomers, POLL_INTERVAL);
 
     const onVis = () => {
-      if (document.visibilityState === "visible") {
-        fetchCustomers();
-      }
+      if (document.visibilityState === "visible") fetchCustomers();
     };
     document.addEventListener("visibilitychange", onVis);
 
@@ -81,25 +74,43 @@ export function ProspectingView() {
           <div className="text-sm text-red-500 dark:text-red-300">{error}</div>
         </div>
       ) : (
-        <div className="w-full max-w-full rounded-xl border border-border bg-background p-6 shadow-lg text-foreground">
-          <header className="mb-4">
+        // Card em coluna: header (fixo), lista (rola no mobile), ações (fixas no fim do card no mobile)
+        <div className="flex h-full min-h-0 w-full max-w-full flex-col rounded-xl border border-border bg-background shadow-lg text-foreground md:h-auto">
+          {/* Header do card */}
+          <header className="shrink-0 px-6 py-4">
             <h1 className="text-xl font-semibold">Prospecção</h1>
             <p className="text-sm text-zinc-600 dark:text-foreground/70">
               Lista de clientes cadastrados e oportunidades.
             </p>
           </header>
 
-          <CustomersTable
-            customers={customers}
-            onRowUpdated={(updated) =>
-              setCustomers((prev) =>
-                prev.map((c) => (c.id === updated.id ? updated : c))
-              )
-            }
-            onRowDeleted={(id) =>
-              setCustomers((prev) => prev.filter((c) => c.id !== id))
-            }
-          />
+          {/* Área da lista: rola no mobile; em desktop volta a ser natural */}
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 md:overflow-visible md:pb-6">
+            <CustomersTable
+              customers={customers}
+              onRowUpdated={(updated) =>
+                setCustomers((prev) =>
+                  prev.map((c) => (c.id === updated.id ? updated : c))
+                )
+              }
+              onRowDeleted={(id) =>
+                setCustomers((prev) => prev.filter((c) => c.id !== id))
+              }
+            />
+          </div>
+
+          <div className=" bg-background p-3 md:hidden">
+            <div className="flex items-center justify-between gap-2">
+              <Link href="/customers/new" className="w-1/2">
+                <Button variant="outline" className="w-full">
+                  + Novo Cliente
+                </Button>
+              </Link>
+              <Link href="/" className="w-1/2">
+                <Button variant="default" icon="home" className="w-full" />
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </AuthGuard>

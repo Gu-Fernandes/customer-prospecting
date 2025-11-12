@@ -13,19 +13,13 @@ export default function Page() {
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === "access_token") {
-        setAuth(!!e.newValue);
-      }
+      if (e.key === "access_token") setAuth(!!e.newValue);
+    };
+    const onVis = () => {
+      if (document.visibilityState === "visible") setAuth(isAuthenticated());
     };
     window.addEventListener("storage", onStorage);
-
-    const onVis = () => {
-      if (document.visibilityState === "visible") {
-        setAuth(isAuthenticated());
-      }
-    };
     document.addEventListener("visibilitychange", onVis);
-
     return () => {
       window.removeEventListener("storage", onStorage);
       document.removeEventListener("visibilitychange", onVis);
@@ -33,8 +27,8 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="flex min-h-screen items-center mx-3 justify-center">
+    <div className="flex h-full min-h-0 items-center justify-center px-2">
       {auth ? <HomeCards /> : <LoginCard onSuccess={() => setAuth(true)} />}
-    </main>
+    </div>
   );
 }

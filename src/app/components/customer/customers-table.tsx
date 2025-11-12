@@ -39,7 +39,8 @@ export function CustomersTable({
     return (
       <div className="text-sm text-zinc-500 dark:text-foreground/70">
         Nenhum cliente cadastrado ainda.
-        <div className="mt-4 flex w-full items-center justify-between gap-3">
+        {/* Em desktop, os botões continuam abaixo (mobile usa a barra fixa no card) */}
+        <div className="mt-4 hidden w-full items-center justify-between gap-3 md:flex">
           <Link href="/customers/new">
             <Button variant="outline" className="w-full sm:w-auto">
               + Novo Cliente
@@ -73,7 +74,7 @@ export function CustomersTable({
         }}
       />
 
-      {/* MOBILE: cards */}
+      {/* MOBILE: cards (rolam no mobile) */}
       <div className="space-y-3 md:hidden">
         {customers.map((c) => (
           <div
@@ -147,7 +148,7 @@ export function CustomersTable({
         ))}
       </div>
 
-      {/* DESKTOP: tabela */}
+      {/* DESKTOP: tabela + botões ao final */}
       <div className="hidden md:block overflow-x-auto">
         <table className="min-w-[900px] w-full border-collapse">
           <thead>
@@ -200,17 +201,22 @@ export function CustomersTable({
             ))}
           </tbody>
         </table>
-      </div>
 
-      <div className="mt-4 flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <Link href="/customers/new">
-          <Button variant="outline" className="w-full sm:w-auto">
-            + Novo Cliente
-          </Button>
-        </Link>
-        <Link href="/">
-          <Button variant="default" icon="home" className="w-full sm:w-auto" />
-        </Link>
+        {/* Botões (desktop) */}
+        <div className="mt-4 flex w-full items-center justify-between gap-2">
+          <Link href="/customers/new">
+            <Button variant="outline" className="w-full sm:w-auto">
+              + Novo Cliente
+            </Button>
+          </Link>
+          <Link href="/">
+            <Button
+              variant="default"
+              icon="home"
+              className="w-full sm:w-auto"
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );

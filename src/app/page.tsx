@@ -16,8 +16,11 @@ export default function Page() {
       if (e.key === "access_token") setAuth(!!e.newValue);
     };
     const onVis = () => {
-      if (document.visibilityState === "visible") setAuth(isAuthenticated());
+      if (document.visibilityState === "visible") {
+        setAuth(isAuthenticated());
+      }
     };
+
     window.addEventListener("storage", onStorage);
     document.addEventListener("visibilitychange", onVis);
     return () => {
@@ -28,18 +31,22 @@ export default function Page() {
 
   if (auth === null) {
     return (
-      <div className="grid h-full min-h-full w-full place-items-center px-3 py-8">
-        <div className="w-full max-w-md">
-          <Loading label="Carregando..." />
-        </div>
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Loading label="Carregando..." />
       </div>
     );
   }
 
+  const isLogged = auth === true;
+
   return (
-    <div className="grid h-full min-h-full w-full place-items-center px-3 py-8">
-      <div className="mx-auto w-full max-w-4xl">
-        {auth ? <HomeCards /> : <LoginCard onSuccess={() => setAuth(true)} />}
+    <div className="min-h-full grid place-items-center p-4">
+      <div className={isLogged ? "w-full max-w-4xl" : "w-full max-w-md"}>
+        {isLogged ? (
+          <HomeCards />
+        ) : (
+          <LoginCard onSuccess={() => setAuth(true)} />
+        )}
       </div>
     </div>
   );

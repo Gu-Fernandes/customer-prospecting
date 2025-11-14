@@ -165,7 +165,7 @@ export function EditCustomerModal({
               />
               <Field
                 name="main_product"
-                label="Produto Principal"
+                label="Produtos"
                 placeholder="Produto"
                 icon="hash"
                 format="upper"

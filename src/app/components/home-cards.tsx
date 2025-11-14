@@ -6,7 +6,7 @@ export function HomeCards() {
       <FeatureCard
         icon="building"
         title="Cadastro de Cliente"
-        description="Registrar empresa, responsável, contato e produto principal."
+        description="Registrar empresa, responsável, contato e produtos."
         href="/customers/new"
         buttonText="Cadastrar cliente"
         buttonVariant="default"

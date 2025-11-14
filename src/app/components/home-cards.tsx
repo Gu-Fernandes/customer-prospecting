@@ -20,6 +20,14 @@ export function HomeCards() {
         buttonText="Ir para prospecção"
         buttonVariant="outline"
       />
+      <FeatureCard
+        icon="plus"
+        title="Cadastro de Produtos"
+        description="Cadastre novos produtos e veja lista de itens cadastrados."
+        href="/products"
+        buttonText="Cadastrar Produtos"
+        buttonVariant="outline"
+      />
     </div>
   );
 }

@@ -39,7 +39,7 @@ export function LoginCard({ onSuccess }: Props) {
   }
 
   return (
-    <div className="w-full max-w-md rounded-xl mx-3 border border-zinc-200 p-5">
+    <div className="w-full max-w-full rounded-xl border p-4">
       <h1 className="mb-4 text-xl font-semibold">Entrar</h1>
 
       {error && (

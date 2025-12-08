@@ -98,7 +98,7 @@ export function Field<TFieldValues extends FieldValues = FieldValues>({
               placeholder={placeholder}
               className={cn(
                 "w-full rounded-md border border-border px-3 py-2 text-sm outline-none",
-                " focus:ring-1",
+
                 Icon ? "pl-9" : "",
                 fieldState.error ? "" : ""
               )}

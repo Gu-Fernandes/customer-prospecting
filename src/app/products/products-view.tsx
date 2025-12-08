@@ -23,7 +23,7 @@ export function ProductsView() {
   return (
     <AuthGuard fallbackMessage="Faça login para visualizar a lista de produtos.">
       {error ? (
-        <div className="w-full rounded-xl border border-border bg-background p-6 shadow-lg">
+        <div className="w-full max-w-md mx-auto rounded-xl border border-border bg-background p-6 shadow-lg">
           <p className="text-sm text-red-500 dark:text-red-300">{error}</p>
 
           <div className="mt-3">
@@ -33,7 +33,7 @@ export function ProductsView() {
           </div>
         </div>
       ) : (
-        <div className="flex h-full min-h-0 w-full max-w-full flex-col rounded-xl border border-border bg-background text-foreground shadow-lg md:h-auto">
+        <div className="flex h-full min-h-0 w-full max-w-4xl mx-auto flex-col rounded-xl border bg-background text-foreground shadow-lg md:h-auto">
           <header className="shrink-0 px-6 py-4">
             <h1 className="text-xl font-semibold">Produtos</h1>
             <p className="text-sm text-zinc-600 dark:text-foreground/70">

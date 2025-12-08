@@ -109,8 +109,7 @@ export function ProductsTable({ products, onDeleted }: Props) {
                   type="button"
                   variant="destructive"
                   icon="trash"
-                  className="h-8 w-8 px-0"
-                  aria-label={`Excluir produto ${p.code}`}
+                  title={`Excluir produto ${p.code}`}
                   onClick={() => openDeleteModal(p)}
                 />
               </div>
@@ -145,8 +144,7 @@ export function ProductsTable({ products, onDeleted }: Props) {
                         type="button"
                         variant="destructive"
                         icon="trash"
-                        className="h-8 w-8 px-0"
-                        aria-label={`Excluir produto ${p.code}`}
+                        title={`Excluir produto ${p.code}`}
                         onClick={() => openDeleteModal(p)}
                       />
                     </div>

@@ -52,7 +52,8 @@ export function Footer() {
         className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
       />
 
-      <div className="mx-auto max-w-full px-2 text-xs text-muted-foreground">
+      {/* container centralizado e afastado das bordas em desktop */}
+      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 md:px-8 lg:px-12 text-xs text-muted-foreground">
         {/* MOBILE: duas linhas */}
         <div className="flex min-h-14 flex-col items-center justify-center gap-1 py-2 md:hidden">
           <div className="flex flex-wrap items-center justify-center gap-2">

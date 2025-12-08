@@ -32,7 +32,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles = `
-      inline-flex items-center justify-center gap-2
+      inline-flex items-center justify-center gap-2 cursor-pointer
       rounded-lg text-sm font-medium shadow-sm outline-none
       transition-colors disabled:cursor-not-allowed disabled:opacity-50
       focus-visible:ring-2 focus-visible:ring-primary/40
@@ -59,7 +59,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         dark:text-foreground dark:hover:bg-white/5
       `,
       icon: `
-        bg-transparent text-foreground
+        bg-transparent text-foreground border-none
         dark:text-foreground
       `,
     };

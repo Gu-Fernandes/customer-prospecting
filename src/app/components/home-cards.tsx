@@ -2,7 +2,7 @@ import { FeatureCard } from "./feature-card";
 
 export function HomeCards() {
   return (
-    <div className="grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2">
+    <div className="grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-2">
       <FeatureCard
         icon="building"
         title="Cadastro de Cliente"

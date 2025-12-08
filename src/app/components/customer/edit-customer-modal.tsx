@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  useForm,
+  Controller,
+  type SubmitHandler,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/button/button";
@@ -13,12 +18,22 @@ import {
   Customer,
   updateCustomer,
   deleteCustomer,
+  type UpdateCustomerDto,
 } from "@/services/customer.service";
 import {
   customerFormSchema,
   type CustomerFormValues,
 } from "@/schemas/customer-form-schema";
 import { ConfirmDeleteModal } from "@/components/feedback/confirm-delete-modal";
+
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { getProducts, type Product } from "@/services/products.service";
 
 type Props = {
   isOpen: boolean;
@@ -45,9 +60,9 @@ export function EditCustomerModal({
       responsible: "",
       email: "",
       phone: "",
-      main_product: "",
       sku: "",
       supplier: "",
+      products: [],
     },
     mode: "onSubmit",
     shouldFocusError: false,
@@ -56,35 +71,121 @@ export function EditCustomerModal({
   const {
     handleSubmit,
     reset,
+    control,
     formState: { isSubmitting },
   } = methods;
-
-  useEffect(() => {
-    if (customer) {
-      reset({
-        company: customer.company ?? "",
-        cnpj: customer.cnpj ?? "",
-        responsible: customer.responsible ?? "",
-        email: customer.email ?? "",
-        phone: customer.phone ?? "",
-        main_product: customer.main_product ?? "",
-        sku: customer.sku ?? "",
-        supplier: customer.supplier ?? "",
-      });
-    }
-  }, [customer, reset]);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [productsError, setProductsError] = useState<string | null>(null);
+
+  const [productValues, setProductValues] = useState<string[]>([]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadProducts() {
+      try {
+        setLoadingProducts(true);
+        setProductsError(null);
+        const data = await getProducts();
+        if (!active) return;
+        setProducts(data);
+      } catch (err) {
+        console.error("❌ Erro ao carregar produtos:", err);
+        if (!active) return;
+        setProductsError("Não foi possível carregar a lista de produtos.");
+      } finally {
+        if (!active) return;
+        setLoadingProducts(false);
+      }
+    }
+
+    loadProducts();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || !customer) return;
+
+    const productsFromCustomer = Array.isArray(customer.products)
+      ? customer.products
+      : [];
+
+    reset({
+      company: customer.company ?? "",
+      cnpj: customer.cnpj ?? "",
+      responsible: customer.responsible ?? "",
+      email: customer.email ?? "",
+      phone: customer.phone ?? "",
+      sku: customer.sku ?? "",
+      supplier: customer.supplier ?? "",
+      products: productsFromCustomer,
+    });
+
+    setProductValues(productsFromCustomer);
+  }, [isOpen, customer, reset]);
+
   if (!isOpen || !customer) return null;
 
-  async function onSubmit(values: CustomerFormValues) {
+  function getAvailableProducts(index: number, currentValue?: string) {
+    const selected = new Set(
+      productValues
+        .map((value, idx) => (idx === index ? null : value))
+        .filter(
+          (v): v is string => typeof v === "string" && v.trim().length > 0
+        )
+    );
+
+    return products.filter((p) => {
+      if (currentValue && p.code === currentValue) return true;
+      return !selected.has(p.code);
+    });
+  }
+
+  function handleChangeProduct(index: number, newCode: string) {
+    setProductValues((prev) => {
+      const clone = [...prev];
+      clone[index] = newCode;
+      return clone;
+    });
+  }
+
+  function handleAddProduct() {
+    setProductValues((prev) => [...prev, ""]);
+  }
+
+  function handleRemoveProduct(index: number) {
+    setProductValues((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  const onSubmit: SubmitHandler<CustomerFormValues> = async (values) => {
     if (!customer) return;
-    const updated = await updateCustomer(customer.id, values);
+
+    const productList = productValues
+      .map((v) => v.trim())
+      .filter((v) => v.length > 0);
+
+    const payload: UpdateCustomerDto = {
+      company: values.company,
+      cnpj: values.cnpj,
+      responsible: values.responsible,
+      email: values.email,
+      phone: values.phone,
+      sku: values.sku,
+      supplier: values.supplier,
+      products: productList,
+    };
+
+    const updated = await updateCustomer(customer.id, payload);
     onUpdated?.(updated);
     onClose();
-  }
+  };
 
   async function confirmDelete() {
     try {
@@ -101,7 +202,6 @@ export function EditCustomerModal({
 
   return (
     <>
-      {/* Backdrop + painel responsivo */}
       <div
         className={cn(
           "fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4",
@@ -118,7 +218,6 @@ export function EditCustomerModal({
           <button
             onClick={onClose}
             className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-            title="Fechar"
           >
             <XIcon className="h-4 w-4" />
           </button>
@@ -164,19 +263,86 @@ export function EditCustomerModal({
                 icon="phone"
               />
               <Field
-                name="main_product"
-                label="Produtos"
-                placeholder="Produto"
-                icon="hash"
-                format="upper"
-              />
-              <Field
                 name="sku"
-                label="SKU Produto Principal"
+                label="SKU Principal"
                 placeholder="SKU"
                 icon="hash"
                 format="upper"
               />
+
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-sm font-medium">Produtos</label>
+
+                {productValues.length === 0 && (
+                  <p className="text-xs text-zinc-500">
+                    Nenhum produto adicionado. Clique em &quot;+&quot; para
+                    adicionar.
+                  </p>
+                )}
+
+                {productValues.map((value, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Controller
+                      name="products"
+                      control={control}
+                      render={() => {
+                        const available = getAvailableProducts(index, value);
+                        return (
+                          <Select
+                            value={value}
+                            onValueChange={(val) =>
+                              handleChangeProduct(index, val)
+                            }
+                            disabled={loadingProducts || !!productsError}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue
+                                placeholder={
+                                  loadingProducts
+                                    ? "Carregando produtos..."
+                                    : `Produto ${index + 1}`
+                                }
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {available.map((p) => (
+                                <SelectItem key={p.id} value={p.code}>
+                                  {p.code}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        );
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => handleRemoveProduct(index)}
+                      className="h-8 w-8 p-0 flex items-center justify-center"
+                      title="Remover produto"
+                    >
+                      -
+                    </Button>
+                  </div>
+                ))}
+
+                <div className="pt-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAddProduct}
+                    className="h-8 px-3"
+                  >
+                    +
+                  </Button>
+                </div>
+
+                {productsError && (
+                  <p className="text-xs text-destructive">{productsError}</p>
+                )}
+              </div>
+
               <Field
                 name="supplier"
                 label="Fornecedor"
@@ -196,7 +362,7 @@ export function EditCustomerModal({
                   <span className="hidden sm:inline">Excluir cliente</span>
                 </Button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 ml-auto">
                   <Button type="button" variant="ghost" onClick={onClose}>
                     Cancelar
                   </Button>

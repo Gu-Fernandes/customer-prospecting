@@ -33,8 +33,7 @@ export function ProductFormCard() {
   } = methods;
 
   async function onSubmit(data: ProductFormValues) {
-    await createProduct({ code: data.code });
-    // volta para a lista
+    await createProduct({ code: data.code }); 
     router.replace("/products");
   }
 

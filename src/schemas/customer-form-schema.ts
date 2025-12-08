@@ -36,11 +36,11 @@ export const customerFormSchema = z.object({
       message: "Telefone inválido",
     }),
 
-  main_product: z.string().optional(),
-
   sku: z.string().optional(),
 
   supplier: z.string().optional(),
+
+  products: z.array(z.string()),
 });
 
 export type CustomerFormValues = z.infer<typeof customerFormSchema>;

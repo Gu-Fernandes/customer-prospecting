@@ -1,4 +1,3 @@
-import type { CustomerFormValues } from "@/schemas/customer-form-schema";
 import { api } from "./api.service";
 
 export type Customer = {
@@ -8,7 +7,7 @@ export type Customer = {
   responsible: string;
   email: string;
   phone: string;
-  main_product: string;
+  products: string[];
   sku: string;
   supplier: string;
   created_at: string;
@@ -19,10 +18,22 @@ export type CreateCustomerResponse = {
   data: Customer;
 };
 
+// payload exatamente no formato que a API espera
+export type CreateCustomerPayload = {
+  company: string;
+  cnpj: string;
+  responsible: string;
+  email: string;
+  phone: string;
+  sku?: string;
+  supplier?: string;
+  products: string[];
+};
+
 export type UpdateCustomerDto = Partial<Omit<Customer, "id" | "created_at">>;
 
 export async function createCustomer(
-  payload: CustomerFormValues
+  payload: CreateCustomerPayload
 ): Promise<CreateCustomerResponse> {
   return api.post<CreateCustomerResponse>("/customers", payload);
 }

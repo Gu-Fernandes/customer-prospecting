@@ -1,0 +1,61 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+import { isAuthenticated } from "@/services/auth.service";
+import { LoginCard } from "@/app/components/login-card";
+import { HomeCards } from "@/app/components/home-cards";
+import { Loading } from "@/components/loading/loading";
+
+export function HomePage() {
+  const [auth, setAuth] = useState<boolean | null>(() => {
+    if (typeof window === "undefined") return null;
+    return isAuthenticated();
+  });
+
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "access_token") {
+        setAuth(!!e.newValue);
+      }
+    };
+
+    const onVis = () => {
+      if (document.visibilityState === "visible") {
+        setAuth(isAuthenticated());
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    document.addEventListener("visibilitychange", onVis);
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+
+  if (auth === null) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Loading label="Carregando..." />
+      </div>
+    );
+  }
+
+  const isLogged = auth === true;
+
+  return (
+    <div className="min-h-full grid place-items-center p-2">
+      {isLogged ? (
+        <div className="w-full max-w-7xl flex justify-center">
+          <HomeCards />
+        </div>
+      ) : (
+        <div className="w-full max-w-md">
+          <LoginCard onSuccess={() => setAuth(true)} />
+        </div>
+      )}
+    </div>
+  );
+}

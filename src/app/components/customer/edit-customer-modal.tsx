@@ -8,6 +8,7 @@ import {
   type SubmitHandler,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Button } from "@/components/button/button";
 import { Form } from "@/components/form/form";
@@ -182,19 +183,48 @@ export function EditCustomerModal({
       products: productList,
     };
 
-    const updated = await updateCustomer(customer.id, payload);
-    onUpdated?.(updated);
-    onClose();
+    try {
+      const updated = await updateCustomer(customer.id, payload);
+      onUpdated?.(updated);
+
+      toast.success("Cliente atualizado com sucesso!", {
+        description:
+          updated.company && updated.company.trim().length > 0
+            ? `As informações de "${updated.company}" foram salvas.`
+            : "As informações do cliente foram salvas.",
+      });
+
+      onClose();
+    } catch (error) {
+      console.error("❌ Erro ao atualizar cliente:", error);
+      toast.error("Não foi possível salvar as alterações.", {
+        description: "Tente novamente em alguns instantes.",
+      });
+    }
   };
 
   async function confirmDelete() {
+    if (!customer) return;
+
     try {
       setIsDeleting(true);
-      if (!customer) return;
       await deleteCustomer(customer.id);
       onDeleted?.(customer.id);
+
+      toast.success("Cliente excluído.", {
+        description:
+          customer.company && customer.company.trim().length > 0
+            ? `"${customer.company}" foi removido da base.`
+            : "O cliente foi removido da base.",
+      });
+
       setConfirmOpen(false);
       onClose();
+    } catch (error) {
+      console.error("❌ Erro ao excluir cliente:", error);
+      toast.error("Não foi possível excluir o cliente.", {
+        description: "Tente novamente em alguns instantes.",
+      });
     } finally {
       setIsDeleting(false);
     }

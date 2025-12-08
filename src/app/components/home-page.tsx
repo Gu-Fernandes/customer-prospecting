@@ -8,12 +8,13 @@ import { HomeCards } from "@/app/components/home-cards";
 import { Loading } from "@/components/loading/loading";
 
 export function HomePage() {
-  const [auth, setAuth] = useState<boolean | null>(() => {
-    if (typeof window === "undefined") return null;
-    return isAuthenticated();
-  });
+  const [auth, setAuth] = useState<boolean | null>(null);
 
   useEffect(() => {
+    queueMicrotask(() => {
+      setAuth(isAuthenticated());
+    });
+
     const onStorage = (e: StorageEvent) => {
       if (e.key === "access_token") {
         setAuth(!!e.newValue);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "../theme/theme-toggle";
 
 export function Header() {
   return (
@@ -7,6 +8,8 @@ export function Header() {
         <Link href="/" className="text-lg text-primary font-semibold">
           Prospecção Clientes
         </Link>
+
+        <ThemeToggle />
       </div>
     </header>
   );

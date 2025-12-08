@@ -79,14 +79,6 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary: #2235c0;
-    --muted: #272727;
-    --border: #28282c;
-  }
-}
-
 .dark {
   --background: oklch(0% 0 0);
   --foreground: oklch(0.985 0 0);

@@ -27,7 +27,7 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "rounded-xl border dark:border-red p-4 shadow-lg flex flex-col justify-between",
+        "rounded-xl border p-4 shadow-lg flex flex-col justify-between",
         className
       )}
     >

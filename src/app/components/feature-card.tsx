@@ -27,13 +27,13 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border p-6 shadow-lg flex flex-col justify-between",
+        "rounded-xl border border-border p-4 shadow-lg flex flex-col justify-between",
         className
       )}
     >
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20">
-          <Icon className="h-5 w-5" />
+      <div className="flex items-start gap-4">
+        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/20">
+          <Icon className="h-6 w-6" />
         </div>
 
         <div className="flex flex-col">
@@ -42,7 +42,7 @@ export function FeatureCard({
         </div>
       </div>
 
-      <div className="mt-6 flex justify-end">
+      <div className="mt-5 flex justify-end">
         <Link href={href}>
           <Button variant={buttonVariant}>{buttonText}</Button>
         </Link>

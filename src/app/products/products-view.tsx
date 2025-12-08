@@ -42,7 +42,7 @@ export function ProductsView() {
           </header>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 md:overflow-visible md:pb-6">
-            <ProductsTable products={products} />
+            <ProductsTable products={products} onDeleted={reload} />
           </div>
 
           <div className="bg-background p-3 md:hidden">

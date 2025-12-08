@@ -5,8 +5,8 @@ import { cn } from "@/libs/cn";
 
 type ConfirmDeleteModalProps = {
   isOpen: boolean;
-  title?: string;
-  message?: string;
+  title: string;
+  message: string;
   loading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -14,8 +14,8 @@ type ConfirmDeleteModalProps = {
 
 export function ConfirmDeleteModal({
   isOpen,
-  title = "Confirmar exclusão",
-  message = "Tem certeza que deseja excluir esse cliente?",
+  title,
+  message,
   loading = false,
   onConfirm,
   onCancel,
@@ -73,6 +73,7 @@ export function ConfirmDeleteModal({
             </Button>
 
             <Button
+              type="button"
               variant="destructive"
               icon="trash"
               onClick={onConfirm}

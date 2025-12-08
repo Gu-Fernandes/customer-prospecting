@@ -45,18 +45,14 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer
-      role="contentinfo"
-      aria-label="Rodapé"
-      className="relative min-h-14 shrink-0 border-t border-border/50 bg-background/90 backdrop-blur-sm"
-    >
+    <footer className="relative min-h-14 shrink-0 border-t border-border/50 bg-background/90 backdrop-blur-sm">
       {/* hairline gradiente no topo */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
       />
 
-      <div className="mx-auto max-w-6xl px-4 text-xs text-muted-foreground">
+      <div className="mx-auto max-w-full px-2 text-xs text-muted-foreground">
         {/* MOBILE: duas linhas */}
         <div className="flex min-h-14 flex-col items-center justify-center gap-1 py-2 md:hidden">
           <div className="flex flex-wrap items-center justify-center gap-2">
